@@ -1,0 +1,59 @@
+/*
+
+Analyzing NYC Public Schools Test Scores
+
+*/
+
+-- Identify schools missing data in the percent_tested column to determine what schools did not report the percentage of students tested. 
+
+SELECT ((count(*) - count(percent_tested)) ) AS num_tested_missing, COUNT(*) as num_schools
+FROM schools 
+
+-- Identify the number of unique school locations that exist in database
+
+SELECT COUNT(DISTINCT building_code) AS num_school_buildings
+FROM schools 
+
+-- Find all schools with an average math score of at least 80%
+
+SELECT school_name, average_math
+FROM schools 
+WHERE average_math >= 640
+ORDER BY average_math DESC 
+
+-- Find lowest score for reading
+
+SELECT MIN(average_reading) AS lowest_reading
+FROM schools
+
+-- Find school with highest average writing score 
+
+SELECT school_name, MAX(average_writing) AS max_writing
+FROM schools
+GROUP BY school_name
+ORDER BY max_writing DESC
+LIMIT 1; 
+
+-- Find top 10 schools with the highest average SAT score
+
+SELECT school_name, SUM(average_math + average_reading + average_writing) AS average_sat
+FROM schools 
+GROUP BY school_name
+ORDER BY average_sat DESC
+LIMIT 10 
+
+-- Calculate number of schools and the average SAT score per borough 
+
+SELECT borough, COUNT(schools) AS num_schools, (SUM(average_math + average_reading + average_writing) / COUNT(schools)) AS average_borough_sat
+FROM schools 
+GROUP BY borough
+ORDER BY average_borough_sat DESC
+
+-- Find top five schools for math performance in Brooklyn 
+
+SELECT school_name, average_math
+FROM schools 
+WHERE borough = 'Brooklyn'
+GROUP BY school_name
+ORDER BY average_math DESC
+LIMIT 5
